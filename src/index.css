@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(98, 108, 65, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(98, 108, 65, 0.6);
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+  background-size: 1000px 100%;
+  animation: shimmer 3s infinite;
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.6s ease-out;
+}
+
+.animate-glow {
+  animation: glow 3s ease-in-out infinite;
+}
