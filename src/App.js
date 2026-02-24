@@ -2,18 +2,37 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Package, Leaf, Award, Mail, Phone, MapPin, Droplet, Sun, Wind } from 'lucide-react';
 import { OliveLeafPattern, OliveBranchSVG, DecorativeBorder, OliveTreeSVG, AncientPattern, OrnamentalDivider } from './components/SVGDecorations';
 import { OlinaBottleNord, OlinaBottleCentre, OlinaBottleSud, RegionalLabelNorth, RegionalLabelCentral, RegionalLabelSouth } from './components/ProductBottles';
+import { CardParticles, CARD_COLORS } from './components/CardParticles';
+import AppBackground from './components/AppBackground';
+import OilDrips from './components/OilDrips';
+import ScrollingProductBackground from './components/ScrollingProductBackground';
+
+const MOODS = {
+  default:  { from: '#f8f6f0', mid: '#f0ece0', to: '#e8e2d0' },
+  green:    { from: '#f2f9eb', mid: '#e8f5d8', to: '#ddf0c4' },
+  gold:     { from: '#fdf6ec', mid: '#faeedd', to: '#f6e4c8' },
+  olive:    { from: '#f3f7e8', mid: '#eaf2d4', to: '#e0ecbf' },
+  nord:     { from: '#edf9f4', mid: '#d8f2e8', to: '#c2eadb' },
+  centre:   { from: '#fdf7e8', mid: '#faefd4', to: '#f6e4b8' },
+  sud:      { from: '#fdf3ec', mid: '#fae4d4', to: '#f6d2b8' },
+  northern: { from: '#edf9f0', mid: '#d8f2e4', to: '#c2ead6' },
+  central:  { from: '#fdfbea', mid: '#faf5d0', to: '#f6edb4' },
+  southern: { from: '#fdf2ea', mid: '#fae0cc', to: '#f6ccac' },
+};
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mood, setMoodState] = useState('default');
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const setMood   = (name) => setMoodState(name);
+  const resetMood = ()     => setMoodState('default');
 
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
@@ -23,18 +42,31 @@ function App() {
     }
   };
 
+  const currentMood = MOODS[mood];
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sand-50 to-white bg-ancient-texture">
+    <div style={{
+      minHeight: '100vh',
+      position: 'relative',
+      '--bg-from': currentMood.from,
+      '--bg-mid': currentMood.mid,
+      '--bg-to': currentMood.to,
+      background: 'linear-gradient(160deg, var(--bg-from) 0%, var(--bg-mid) 50%, var(--bg-to) 100%)',
+      transition: '--bg-from 10s ease, --bg-mid 10s ease, --bg-to 10s ease',
+    }}>
+      <ScrollingProductBackground />
+      <OilDrips />
+      <AppBackground />
       <Navigation 
         scrolled={scrolled} 
         isMenuOpen={isMenuOpen} 
         setIsMenuOpen={setIsMenuOpen}
         scrollToSection={scrollToSection}
       />
-      <Hero scrollToSection={scrollToSection} />
+      <Hero scrollToSection={scrollToSection} setMood={setMood} resetMood={resetMood} />
       <Heritage />
-      <Products />
-      <Regions />
+      <Products setMood={setMood} resetMood={resetMood} />
+      <Regions setMood={setMood} resetMood={resetMood} />
       <Quality />
       <Contact />
       <Footer scrollToSection={scrollToSection} />
@@ -98,11 +130,11 @@ function Navigation({ scrolled, isMenuOpen, setIsMenuOpen, scrollToSection }) {
   );
 }
 
-function Hero({ scrollToSection }) {
+function Hero({ scrollToSection, setMood, resetMood }) {
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-24">
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-olive-900/30 via-sand-200/50 to-olive-800/30"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-olive-900/10 via-transparent to-olive-800/10"></div>
         <div className="absolute inset-0 opacity-20">
           <OliveLeafPattern className="absolute top-10 left-10 w-32 h-32 text-olive-700 animate-pulse" />
           <OliveLeafPattern className="absolute bottom-20 right-20 w-40 h-40 text-olive-600" />
@@ -147,30 +179,33 @@ function Hero({ scrollToSection }) {
           </button>
         </div>
 
-        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl border-2 border-olive-200 hover:border-olive-400 transition-all hover:-translate-y-2">
-            <div className="relative mb-6">
-              <Leaf className="w-16 h-16 text-olive-600 mx-auto" />
+        <div className="mt-20 mb-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="card-hover-fx card-green bg-white/60 backdrop-blur-md p-8 rounded-2xl shadow-2xl border-2 border-olive-200 hover:border-olive-400 hover:-translate-y-2" onMouseEnter={() => setMood('green')} onMouseLeave={() => resetMood()}>
+            <CardParticles cardClass="" colors={CARD_COLORS.green} />
+            <div className="relative z-10 mb-6">
+              <Leaf className="w-16 h-16 text-olive-600 mx-auto leaf-sway" />
               <OliveLeafPattern className="absolute -top-2 -right-2 w-12 h-12 text-olive-300 opacity-50" />
             </div>
-            <h3 className="text-xl font-display font-bold text-olive-900 mb-3">Authentic Heritage</h3>
-            <p className="text-olive-700 font-elegant text-lg">2,500+ year old olive tradition</p>
+            <h3 className="relative z-10 text-xl font-display font-bold text-olive-900 mb-3">Authentic Heritage</h3>
+            <p className="relative z-10 text-olive-700 font-elegant text-lg">2,500+ year old olive tradition</p>
           </div>
-          <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl border-2 border-sand-300 hover:border-sand-500 transition-all hover:-translate-y-2">
-            <div className="relative mb-6">
-              <Award className="w-16 h-16 text-sand-700 mx-auto" />
+          <div className="card-hover-fx card-gold bg-white/60 backdrop-blur-md p-8 rounded-2xl shadow-2xl border-2 border-sand-300 hover:border-sand-500 hover:-translate-y-2" onMouseEnter={() => setMood('gold')} onMouseLeave={() => resetMood()}>
+            <CardParticles cardClass="" colors={CARD_COLORS.gold} />
+            <div className="relative z-10 mb-6">
+              <Award className="w-16 h-16 text-sand-700 mx-auto leaf-sway" />
               <AncientPattern className="absolute -top-2 -right-2 w-12 h-12 text-sand-400 opacity-50" />
             </div>
-            <h3 className="text-xl font-display font-bold text-olive-900 mb-3">Premium Quality</h3>
-            <p className="text-olive-700 font-elegant text-lg">Certified organic extra virgin</p>
+            <h3 className="relative z-10 text-xl font-display font-bold text-olive-900 mb-3">Premium Quality</h3>
+            <p className="relative z-10 text-olive-700 font-elegant text-lg">Certified organic extra virgin</p>
           </div>
-          <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl border-2 border-olive-200 hover:border-olive-400 transition-all hover:-translate-y-2">
-            <div className="relative mb-6">
-              <Package className="w-16 h-16 text-olive-600 mx-auto" />
+          <div className="card-hover-fx card-olive bg-white/60 backdrop-blur-md p-8 rounded-2xl shadow-2xl border-2 border-olive-200 hover:border-olive-400 hover:-translate-y-2" onMouseEnter={() => setMood('olive')} onMouseLeave={() => resetMood()}>
+            <CardParticles cardClass="" colors={CARD_COLORS.olive} />
+            <div className="relative z-10 mb-6">
+              <Package className="w-16 h-16 text-olive-600 mx-auto leaf-sway" />
               <OliveLeafPattern className="absolute -top-2 -right-2 w-12 h-12 text-olive-300 opacity-50" />
             </div>
-            <h3 className="text-xl font-display font-bold text-olive-900 mb-3">Modern Packaging</h3>
-            <p className="text-olive-700 font-elegant text-lg">Innovative design solutions</p>
+            <h3 className="relative z-10 text-xl font-display font-bold text-olive-900 mb-3">Modern Packaging</h3>
+            <p className="relative z-10 text-olive-700 font-elegant text-lg">Innovative design solutions</p>
           </div>
         </div>
       </div>
@@ -180,7 +215,7 @@ function Hero({ scrollToSection }) {
 
 function Heritage() {
   return (
-    <section id="about" className="py-24 bg-white relative overflow-hidden">
+    <section id="about" className="py-24 relative overflow-hidden">
       <OliveTreeSVG className="absolute top-10 right-0 w-48 h-72 text-olive-200 opacity-30" />
       <OliveTreeSVG className="absolute bottom-10 left-0 w-48 h-72 text-sand-300 opacity-20" />
       
@@ -232,7 +267,7 @@ function Heritage() {
   );
 }
 
-function Products() {
+function Products({ setMood, resetMood }) {
   const products = [
     {
       name: 'OLINA - Le Nord',
@@ -264,7 +299,7 @@ function Products() {
   ];
 
   return (
-    <section id="products" className="py-24 bg-gradient-to-b from-sand-50 via-white to-olive-50 relative overflow-hidden">
+    <section id="products" className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
         <OliveLeafPattern className="absolute top-20 left-20 w-40 h-40 text-olive-600" />
         <OliveLeafPattern className="absolute bottom-20 right-20 w-40 h-40 text-sand-600" />
@@ -282,64 +317,61 @@ function Products() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-10 mb-16">
+        <div className="grid md:grid-cols-3 gap-8 lg:gap-12 mb-20 max-w-7xl mx-auto px-4">
           {products.map((product, index) => (
             <div
               key={index}
-              className="bg-gradient-to-br from-white via-sand-50/30 to-olive-50/30 backdrop-blur-sm rounded-3xl p-8 shadow-2xl hover:shadow-olive-500/50 transition-all transform hover:-translate-y-4 hover:scale-105 border-4 border-olive-300 hover:border-olive-500 relative overflow-hidden group animate-fadeInUp animate-glow"
+              className={`card-hover-fx ${ index === 0 ? 'card-nord' : index === 1 ? 'card-centre' : 'card-sud' } bg-white/50 backdrop-blur-sm rounded-3xl p-6 lg:p-8 shadow-2xl hover:shadow-olive-500/50 transition-all transform hover:-translate-y-3 hover:scale-[1.02] border-2 border-olive-200 hover:border-olive-400 relative overflow-hidden group animate-fadeInUp animate-glow`}
+              onMouseEnter={() => setMood(index === 0 ? 'nord' : index === 1 ? 'centre' : 'sud')}
+              onMouseLeave={() => resetMood()}
               style={{ animationDelay: `${index * 0.2}s` }}
             >
-              <div className="absolute inset-0 animate-shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
-              <div className="absolute top-0 right-0 w-40 h-40 opacity-5 group-hover:opacity-15 transition-opacity duration-500">
+              <CardParticles cardClass="" colors={index === 0 ? CARD_COLORS.nord : index === 1 ? CARD_COLORS.centre : CARD_COLORS.sud} />
+
+              <div className="absolute top-0 right-0 w-32 h-32 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
                 <OliveLeafPattern className="w-full h-full text-olive-600" />
               </div>
               
-              <div className="absolute -top-10 -left-10 w-32 h-32 bg-gradient-to-br from-olive-400/10 to-sand-400/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-              <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-gradient-to-br from-sand-400/10 to-olive-400/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+              <div className="absolute -top-8 -left-8 w-24 h-24 bg-gradient-to-br from-olive-400/10 to-sand-400/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+              <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-gradient-to-br from-sand-400/10 to-olive-400/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
               
               <div className="relative z-10 flex flex-col items-center">
-                <div className="mb-8 relative group-hover:scale-110 transition-transform duration-500">
-                  <div className="absolute inset-0 bg-gradient-to-br from-olive-400/20 to-sand-400/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
-                  <div className="relative bg-white rounded-2xl p-4 shadow-2xl border-2 border-olive-200 group-hover:border-olive-400 transition-all duration-300">
+                <div className="mb-6 relative group-hover:scale-105 transition-transform duration-500">
+                  <div className="absolute inset-0 bg-gradient-to-br from-olive-400/10 to-sand-400/10 rounded-xl blur-lg group-hover:blur-xl transition-all duration-500"></div>
+                  <div className="relative bg-white/80 backdrop-blur-sm rounded-xl p-3 shadow-xl border border-olive-200/50 group-hover:border-olive-300 transition-all duration-300">
                     <img 
                       src={`/products/olina_${index === 0 ? 'nord' : index === 1 ? 'centre' : 'sud'}.png`}
                       alt={product.name}
-                      className="w-40 h-56 object-contain"
+                      className="w-full h-64 object-contain"
                     />
                   </div>
-                  <div className="absolute -inset-2 border-2 border-olive-400/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
+                  <div className="absolute -inset-1 border border-olive-400/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 </div>
                 
-                <OrnamentalDivider className="w-32 mb-4 text-olive-500 opacity-50" />
+                <OrnamentalDivider className="w-24 mb-3 text-olive-500 opacity-40" />
                 
-                <h3 className="text-3xl font-display font-bold text-olive-900 mb-2 text-center group-hover:text-olive-700 transition-colors">{product.name}</h3>
-                <p className="text-olive-600 font-elegant text-lg font-semibold mb-4 text-center">{product.region}</p>
+                <h3 className="text-2xl lg:text-3xl font-display font-bold text-olive-900 mb-2 text-center group-hover:text-olive-700 transition-colors px-2">{product.name}</h3>
+                <p className="text-olive-600 font-elegant text-base lg:text-lg font-semibold mb-4 text-center">{product.region}</p>
                 
-                <div className="mb-6">
-                  <span className={`inline-block px-6 py-3 bg-gradient-to-r ${product.color} text-white rounded-full text-base font-display font-semibold shadow-lg group-hover:shadow-2xl transition-shadow`}>
+                <div className="mb-5">
+                  <span className={`inline-block px-5 py-2 bg-gradient-to-r ${product.color} text-white rounded-full text-sm font-display font-semibold shadow-lg group-hover:shadow-xl transition-shadow`}>
                     {product.taste}
                   </span>
                 </div>
                 
-                <DecorativeBorder className="w-24 mb-4 text-olive-400 opacity-40" />
+                <DecorativeBorder className="w-20 mb-4 text-olive-400 opacity-30" />
                 
-                <p className="text-olive-700 leading-relaxed text-center font-elegant text-lg">{product.description}</p>
+                <p className="text-olive-700 leading-relaxed text-center font-elegant text-base px-2">{product.description}</p>
               </div>
             </div>
           ))}
-        </div>
-        
-        <div className="text-center">
-          <p className="text-olive-600 font-elegant text-lg mb-6 italic">Complete Product Range</p>
-          <img src="/etiquette.png" alt="OLINA Complete Collection" className="w-full max-w-6xl mx-auto rounded-3xl shadow-2xl border-4 border-olive-200" />
         </div>
       </div>
     </section>
   );
 }
 
-function Regions() {
+function Regions({ setMood, resetMood }) {
   const regions = [
     {
       name: 'Northern Tunisia',
@@ -371,7 +403,7 @@ function Regions() {
   ];
 
   return (
-    <section id="regions" className="py-24 bg-white relative overflow-hidden">
+    <section id="regions" className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 opacity-5">
         <AncientPattern className="absolute top-20 left-20 w-40 h-40 text-olive-600" />
         <AncientPattern className="absolute bottom-20 right-20 w-40 h-40 text-sand-600" />
@@ -389,56 +421,53 @@ function Regions() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-10 mb-16">
+        <div className="grid md:grid-cols-3 gap-8 lg:gap-12 mb-20 max-w-7xl mx-auto px-4">
           {regions.map((region, index) => (
             <div
               key={index}
-              className="bg-gradient-to-br from-white via-sand-50/50 to-olive-50/50 rounded-3xl p-8 shadow-2xl hover:shadow-olive-500/50 transition-all hover:-translate-y-4 hover:scale-105 border-4 border-olive-300 hover:border-olive-500 relative overflow-hidden group animate-scaleIn animate-glow"
+              className={`card-hover-fx ${ index === 0 ? 'card-northern' : index === 1 ? 'card-central' : 'card-southern' } bg-white/50 backdrop-blur-sm rounded-3xl p-6 lg:p-8 shadow-2xl hover:shadow-olive-500/50 transition-all hover:-translate-y-3 hover:scale-[1.02] border-2 border-olive-200 hover:border-olive-400 relative overflow-hidden group animate-scaleIn animate-glow`}
+              onMouseEnter={() => setMood(index === 0 ? 'northern' : index === 1 ? 'central' : 'southern')}
+              onMouseLeave={() => resetMood()}
               style={{ animationDelay: `${index * 0.2}s` }}
             >
-              <div className="absolute inset-0 animate-shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
-              <div className="absolute top-0 right-0 w-32 h-32 opacity-5 group-hover:opacity-15 transition-opacity duration-500">
+              <CardParticles cardClass="" colors={index === 0 ? CARD_COLORS.northern : index === 1 ? CARD_COLORS.central : CARD_COLORS.southern} />
+
+              <div className="absolute top-0 right-0 w-32 h-32 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
                 <OliveTreeSVG className="w-full h-full text-olive-600" />
               </div>
               
-              <div className="absolute -top-10 -left-10 w-32 h-32 bg-gradient-to-br from-olive-400/10 to-sand-400/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-              <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-gradient-to-br from-sand-400/10 to-olive-400/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+              <div className="absolute -top-8 -left-8 w-24 h-24 bg-gradient-to-br from-olive-400/10 to-sand-400/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+              <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-gradient-to-br from-sand-400/10 to-olive-400/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
               
               <div className="relative z-10 flex flex-col items-center">
-                <div className="mb-8 relative group-hover:scale-110 transition-transform duration-500">
-                  <div className="absolute inset-0 bg-gradient-to-br from-olive-400/20 to-sand-400/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
-                  <div className="relative bg-white rounded-2xl p-4 shadow-2xl border-2 border-olive-200 group-hover:border-olive-400 transition-all duration-300">
+                <div className="mb-6 relative group-hover:scale-105 transition-transform duration-500">
+                  <div className="absolute inset-0 bg-gradient-to-br from-olive-400/10 to-sand-400/10 rounded-xl blur-lg group-hover:blur-xl transition-all duration-500"></div>
+                  <div className="relative bg-white/80 backdrop-blur-sm rounded-xl p-3 shadow-xl border border-olive-200/50 group-hover:border-olive-300 transition-all duration-300">
                     <img 
                       src={`/labels/${index === 0 ? 'northern' : index === 1 ? 'central' : 'southern'}.png`}
                       alt={region.name}
-                      className="w-40 h-56 object-contain"
+                      className="w-full h-64 object-contain"
                     />
                   </div>
-                  <div className="absolute -inset-2 border-2 border-olive-400/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
+                  <div className="absolute -inset-1 border border-olive-400/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 </div>
                 
-                <div className={`w-20 h-20 bg-gradient-to-br ${region.color} rounded-2xl flex items-center justify-center shadow-xl mb-4 group-hover:rotate-12 transition-transform duration-500`}>
-                  <region.icon className="w-12 h-12 text-white" />
+                <div className={`w-16 h-16 bg-gradient-to-br ${region.color} rounded-xl flex items-center justify-center shadow-lg mb-4 group-hover:rotate-6 transition-transform duration-500`}>
+                  <region.icon className="w-9 h-9 text-white" />
                 </div>
                 
-                <OrnamentalDivider className="w-32 mb-4 text-olive-500 opacity-50" />
+                <OrnamentalDivider className="w-24 mb-3 text-olive-500 opacity-40" />
                 
-                <h3 className="text-2xl font-display font-bold text-olive-900 mb-2 text-center group-hover:text-olive-700 transition-colors">{region.name}</h3>
-                <p className="text-olive-600 font-elegant text-lg font-semibold mb-4 text-center">{region.climate}</p>
+                <h3 className="text-xl lg:text-2xl font-display font-bold text-olive-900 mb-2 text-center group-hover:text-olive-700 transition-colors px-2">{region.name}</h3>
+                <p className="text-olive-600 font-elegant text-base lg:text-lg font-semibold mb-4 text-center">{region.climate}</p>
                 
-                <DecorativeBorder className="w-24 mb-4 text-olive-400 opacity-40" />
+                <DecorativeBorder className="w-20 mb-4 text-olive-400 opacity-30" />
                 
-                <p className="text-olive-700 mb-4 leading-relaxed font-elegant text-center">{region.characteristics}</p>
-                <p className="text-olive-800 font-medium italic text-center">{region.ideal}</p>
+                <p className="text-olive-700 mb-3 leading-relaxed font-elegant text-sm lg:text-base text-center px-2">{region.characteristics}</p>
+                <p className="text-olive-800 font-medium italic text-sm text-center px-2">{region.ideal}</p>
               </div>
             </div>
           ))}
-        </div>
-        
-        <div className="text-center">
-          <p className="text-olive-600 font-elegant text-lg mb-6 italic">Regional Label Collection</p>
-          <img src="/etiverbrun.png" alt="Regional Label Varieties" className="w-full max-w-5xl mx-auto rounded-3xl shadow-2xl border-4 border-olive-200" />
         </div>
       </div>
     </section>
@@ -447,7 +476,7 @@ function Regions() {
 
 function Quality() {
   return (
-    <section id="quality" className="py-24 bg-gradient-to-b from-olive-50 to-sand-50 relative overflow-hidden">
+    <section id="quality" className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
         <OliveLeafPattern className="absolute top-10 left-10 w-48 h-48 text-olive-600" />
         <OliveLeafPattern className="absolute bottom-10 right-10 w-48 h-48 text-sand-600" />
@@ -492,7 +521,7 @@ function Quality() {
 
 function Contact() {
   return (
-    <section id="contact" className="py-24 bg-white relative overflow-hidden">
+    <section id="contact" className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 opacity-5">
         <OliveTreeSVG className="absolute top-10 left-10 w-64 h-96 text-olive-600" />
         <OliveTreeSVG className="absolute bottom-10 right-10 w-64 h-96 text-sand-600" />
