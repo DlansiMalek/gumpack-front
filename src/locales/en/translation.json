@@ -1,0 +1,141 @@
+{
+  "nav": {
+    "home": "Home",
+    "heritage": "Heritage",
+    "products": "Products",
+    "regions": "Regions",
+    "quality": "Quality",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Premium Tunisian Olive Oil",
+    "subtitle": "From Ancient Groves to Your Table",
+    "description": "Experience the authentic taste of Tunisia's finest olive oils, crafted with centuries of tradition and modern excellence.",
+    "cta": "Discover Our Collection",
+    "cards": {
+      "heritage": {
+        "title": "Rich Heritage",
+        "description": "Centuries of olive cultivation tradition"
+      },
+      "quality": {
+        "title": "Premium Quality",
+        "description": "Award-winning extra virgin olive oil"
+      },
+      "sustainable": {
+        "title": "Sustainable",
+        "description": "Eco-friendly farming practices"
+      }
+    }
+  },
+  "heritage": {
+    "title": "Our Heritage",
+    "subtitle": "A Legacy of Excellence",
+    "description": "For generations, Tunisian olive growers have perfected the art of producing exceptional olive oil. Our commitment to quality and tradition ensures every bottle captures the essence of Tunisia's rich agricultural heritage.",
+    "stats": {
+      "years": {
+        "value": "100+",
+        "label": "Years of Tradition"
+      },
+      "hectares": {
+        "value": "500+",
+        "label": "Hectares of Groves"
+      },
+      "awards": {
+        "value": "50+",
+        "label": "International Awards"
+      }
+    }
+  },
+  "products": {
+    "title": "Our Premium Collection",
+    "subtitle": "Three distinct varieties, each reflecting the unique terroir of Tunisia's diverse regions",
+    "fullPackage": {
+      "title": "Complete Package",
+      "description": "Discover the diversity of Tunisian climates with our premium package featuring all three regional varieties"
+    },
+    "nord": {
+      "name": "OLINA - Le Nord",
+      "region": "Northern Tunisia",
+      "taste": "Fresh & Fruity",
+      "description": "Fresh, green and aromatic olive oils with balanced fruitiness and refined elegance."
+    },
+    "centre": {
+      "name": "OLINA - Le Centre",
+      "region": "Central Tunisia",
+      "taste": "Smooth & Balanced",
+      "description": "Well-structured olive oils with medium fruitiness and excellent balance."
+    },
+    "sud": {
+      "name": "OLINA - Le Sud",
+      "region": "Southern Tunisia",
+      "taste": "Rich & Intense",
+      "description": "Powerful and highly stable olive oils, naturally rich in polyphenols."
+    }
+  },
+  "regions": {
+    "title": "Three Climates, Three Flavors",
+    "subtitle": "Each region of Tunisia produces olive oil with distinct characteristics shaped by its unique climate",
+    "northern": {
+      "name": "Northern Tunisia",
+      "climate": "Mediterranean Climate",
+      "characteristics": "Fresh, green and aromatic olive oils with balanced fruitiness and refined elegance.",
+      "ideal": "Ideal for premium retail, gourmet markets, and table consumption."
+    },
+    "central": {
+      "name": "Central Tunisia",
+      "climate": "Semi-Arid Climate",
+      "characteristics": "Well-structured olive oils with medium fruitiness and excellent balance.",
+      "ideal": "Perfect for versatile use, food service, and private-label brands."
+    },
+    "southern": {
+      "name": "Southern Tunisia",
+      "climate": "Arid & Desert Climate",
+      "characteristics": "Powerful and highly stable olive oils, naturally rich in polyphenols.",
+      "ideal": "Ideal for long-term storage, blending, and industrial applications."
+    }
+  },
+  "quality": {
+    "title": "Uncompromising Quality",
+    "subtitle": "Excellence in Every Drop",
+    "description": "Our olive oil meets the highest international standards, certified by leading quality organizations worldwide.",
+    "certifications": {
+      "organic": {
+        "title": "Organic Certified",
+        "description": "100% organic farming practices"
+      },
+      "extraVirgin": {
+        "title": "Extra Virgin",
+        "description": "First cold press extraction"
+      },
+      "iso": {
+        "title": "ISO Certified",
+        "description": "International quality standards"
+      },
+      "awards": {
+        "title": "Award Winning",
+        "description": "Recognized globally for excellence"
+      }
+    }
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "Let's discuss how our premium olive oil can enhance your business",
+    "form": {
+      "name": "Your Name",
+      "email": "Email Address",
+      "message": "Your Message",
+      "send": "Send Message"
+    },
+    "info": {
+      "address": "5 rue imem mezrui sidi daoued la Marsa Tunis",
+      "phone": "+216 24 100 372 / +216 93 010 919",
+      "email": "contact@gumpack.tn"
+    }
+  },
+  "footer": {
+    "description": "Premium Tunisian olive oil, crafted with tradition and excellence.",
+    "quickLinks": "Quick Links",
+    "followUs": "Follow Us",
+    "rights": "All rights reserved."
+  }
+}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Menu, X, Package, Leaf, Award, Mail, Phone, MapPin, Droplet, Sun, Wind } from 'lucide-react';
 import { OliveLeafPattern, OliveBranchSVG, DecorativeBorder, OliveTreeSVG, AncientPattern, OrnamentalDivider } from './components/SVGDecorations';
 import { OlinaBottleNord, OlinaBottleCentre, OlinaBottleSud, RegionalLabelNorth, RegionalLabelCentral, RegionalLabelSouth } from './components/ProductBottles';
@@ -6,6 +7,7 @@ import { CardParticles, CARD_COLORS } from './components/CardParticles';
 import AppBackground from './components/AppBackground';
 import OilDrips from './components/OilDrips';
 import ScrollingProductBackground from './components/ScrollingProductBackground';
+import LanguageSwitcher from './components/LanguageSwitcher';
 
 const MOODS = {
   default:  { from: '#f8f6f0', mid: '#f0ece0', to: '#e8e2d0' },
@@ -21,6 +23,7 @@ const MOODS = {
 };
 
 function App() {
+  const { i18n } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mood, setMoodState] = useState('default');
@@ -30,6 +33,12 @@ function App() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.dir = dir;
+    document.documentElement.lang = i18n.language;
+  }, [i18n.language]);
 
   const setMood   = (name) => setMoodState(name);
   const resetMood = ()     => setMoodState('default');
@@ -75,6 +84,16 @@ function App() {
 }
 
 function Navigation({ scrolled, isMenuOpen, setIsMenuOpen, scrollToSection }) {
+  const { t } = useTranslation();
+  
+  const navItems = [
+    { key: 'heritage', label: t('nav.heritage') },
+    { key: 'products', label: t('nav.products') },
+    { key: 'regions', label: t('nav.regions') },
+    { key: 'quality', label: t('nav.quality') },
+    { key: 'contact', label: t('nav.contact') }
+  ];
+
   return (
     <nav className={`fixed w-full z-50 transition-all duration-500 ${
       scrolled ? 'bg-white/95 backdrop-blur-md shadow-2xl py-3 border-b border-olive-200' : 'bg-gradient-to-b from-olive-900/20 to-transparent py-6'
@@ -91,17 +110,20 @@ function Navigation({ scrolled, isMenuOpen, setIsMenuOpen, scrollToSection }) {
             </div>
           </div>
 
-          <div className="hidden md:flex space-x-8">
-            {['About', 'Products', 'Regions', 'Quality', 'Contact'].map((item) => (
-              <button
-                key={item}
-                onClick={() => scrollToSection(item.toLowerCase())}
-                className="text-olive-700 hover:text-olive-900 font-elegant text-lg font-medium transition-all hover:scale-110 relative group"
-              >
-                {item}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-olive-800 transition-all group-hover:w-full"></span>
-              </button>
-            ))}
+          <div className="hidden md:flex items-center gap-6">
+            <div className="flex gap-6">
+              {navItems.map((item) => (
+                <button
+                  key={item.key}
+                  onClick={() => scrollToSection(item.key)}
+                  className="text-olive-700 hover:text-olive-900 font-elegant text-lg font-medium transition-all hover:scale-110 relative group"
+                >
+                  {item.label}
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-olive-800 transition-all group-hover:w-full"></span>
+                </button>
+              ))}
+            </div>
+            <LanguageSwitcher />
           </div>
 
           <button
@@ -114,15 +136,18 @@ function Navigation({ scrolled, isMenuOpen, setIsMenuOpen, scrollToSection }) {
 
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-4 space-y-3 bg-white/95 backdrop-blur-md rounded-lg p-4 shadow-xl">
-            {['About', 'Products', 'Regions', 'Quality', 'Contact'].map((item) => (
+            {navItems.map((item) => (
               <button
-                key={item}
-                onClick={() => scrollToSection(item.toLowerCase())}
+                key={item.key}
+                onClick={() => scrollToSection(item.key)}
                 className="block w-full text-left text-olive-700 hover:text-olive-900 font-elegant text-lg font-medium py-2 border-b border-olive-100 last:border-0"
               >
-                {item}
+                {item.label}
               </button>
             ))}
+            <div className="pt-3 border-t border-olive-200">
+              <LanguageSwitcher />
+            </div>
           </div>
         )}
       </div>
@@ -131,6 +156,8 @@ function Navigation({ scrolled, isMenuOpen, setIsMenuOpen, scrollToSection }) {
 }
 
 function Hero({ scrollToSection, setMood, resetMood }) {
+  const { t } = useTranslation();
+  
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-24">
       <div className="absolute inset-0">
@@ -154,14 +181,14 @@ function Hero({ scrollToSection, setMood, resetMood }) {
         <OliveBranchSVG className="w-full max-w-md mx-auto mb-8 text-olive-600" />
 
         <h1 className="text-6xl md:text-8xl font-display font-bold text-olive-900 mb-6 tracking-wide drop-shadow-lg">
-          GUMPACK
+          {t('hero.title')}
         </h1>
         <p className="text-3xl md:text-4xl text-sand-800 mb-8 font-elegant italic">
-          Innovation in Packaging
+          {t('hero.subtitle')}
         </p>
         <DecorativeBorder className="w-full max-w-2xl mx-auto mb-8 text-olive-700" />
         <p className="text-xl md:text-2xl text-olive-800 mb-12 max-w-3xl mx-auto leading-relaxed font-elegant">
-          Premium packaging solutions for Tunisia's finest extra virgin olive oil
+          {t('hero.description')}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-6 justify-center">
@@ -169,13 +196,13 @@ function Hero({ scrollToSection, setMood, resetMood }) {
             onClick={() => scrollToSection('products')}
             className="px-10 py-5 bg-gradient-to-r from-olive-700 to-olive-800 text-white rounded-full font-display font-semibold text-lg hover:from-olive-800 hover:to-olive-900 transition-all shadow-2xl hover:shadow-olive-500/50 hover:scale-105 border-2 border-olive-900"
           >
-            Explore Our Products
+            {t('hero.cta')}
           </button>
           <button
             onClick={() => scrollToSection('contact')}
             className="px-10 py-5 bg-white/90 backdrop-blur-sm text-olive-800 border-3 border-olive-700 rounded-full font-display font-semibold text-lg hover:bg-olive-50 transition-all shadow-xl hover:scale-105"
           >
-            Get in Touch
+            {t('contact.title')}
           </button>
         </div>
 
@@ -186,8 +213,8 @@ function Hero({ scrollToSection, setMood, resetMood }) {
               <Leaf className="w-16 h-16 text-olive-600 mx-auto leaf-sway" />
               <OliveLeafPattern className="absolute -top-2 -right-2 w-12 h-12 text-olive-300 opacity-50" />
             </div>
-            <h3 className="relative z-10 text-xl font-display font-bold text-olive-900 mb-3">Authentic Heritage</h3>
-            <p className="relative z-10 text-olive-700 font-elegant text-lg">2,500+ year old olive tradition</p>
+            <h3 className="relative z-10 text-xl font-display font-bold text-olive-900 mb-3">{t('hero.cards.heritage.title')}</h3>
+            <p className="relative z-10 text-olive-700 font-elegant text-lg">{t('hero.cards.heritage.description')}</p>
           </div>
           <div className="card-hover-fx card-gold bg-white/60 backdrop-blur-md p-8 rounded-2xl shadow-2xl border-2 border-sand-300 hover:border-sand-500 hover:-translate-y-2" onMouseEnter={() => setMood('gold')} onMouseLeave={() => resetMood()}>
             <CardParticles cardClass="" colors={CARD_COLORS.gold} />
@@ -195,8 +222,8 @@ function Hero({ scrollToSection, setMood, resetMood }) {
               <Award className="w-16 h-16 text-sand-700 mx-auto leaf-sway" />
               <AncientPattern className="absolute -top-2 -right-2 w-12 h-12 text-sand-400 opacity-50" />
             </div>
-            <h3 className="relative z-10 text-xl font-display font-bold text-olive-900 mb-3">Premium Quality</h3>
-            <p className="relative z-10 text-olive-700 font-elegant text-lg">Certified organic extra virgin</p>
+            <h3 className="relative z-10 text-xl font-display font-bold text-olive-900 mb-3">{t('hero.cards.quality.title')}</h3>
+            <p className="relative z-10 text-olive-700 font-elegant text-lg">{t('hero.cards.quality.description')}</p>
           </div>
           <div className="card-hover-fx card-olive bg-white/60 backdrop-blur-md p-8 rounded-2xl shadow-2xl border-2 border-olive-200 hover:border-olive-400 hover:-translate-y-2" onMouseEnter={() => setMood('olive')} onMouseLeave={() => resetMood()}>
             <CardParticles cardClass="" colors={CARD_COLORS.olive} />
@@ -204,8 +231,8 @@ function Hero({ scrollToSection, setMood, resetMood }) {
               <Package className="w-16 h-16 text-olive-600 mx-auto leaf-sway" />
               <OliveLeafPattern className="absolute -top-2 -right-2 w-12 h-12 text-olive-300 opacity-50" />
             </div>
-            <h3 className="relative z-10 text-xl font-display font-bold text-olive-900 mb-3">Modern Packaging</h3>
-            <p className="relative z-10 text-olive-700 font-elegant text-lg">Innovative design solutions</p>
+            <h3 className="relative z-10 text-xl font-display font-bold text-olive-900 mb-3">{t('hero.cards.sustainable.title')}</h3>
+            <p className="relative z-10 text-olive-700 font-elegant text-lg">{t('hero.cards.sustainable.description')}</p>
           </div>
         </div>
       </div>
@@ -214,8 +241,10 @@ function Hero({ scrollToSection, setMood, resetMood }) {
 }
 
 function Heritage() {
+  const { t } = useTranslation();
+  
   return (
-    <section id="about" className="py-24 relative overflow-hidden">
+    <section id="heritage" className="py-24 relative overflow-hidden">
       <OliveTreeSVG className="absolute top-10 right-0 w-48 h-72 text-olive-200 opacity-30" />
       <OliveTreeSVG className="absolute bottom-10 left-0 w-48 h-72 text-sand-300 opacity-20" />
       
@@ -225,26 +254,14 @@ function Heritage() {
         <div className="grid md:grid-cols-2 gap-16 items-center">
           <div>
             <h2 className="text-5xl md:text-6xl font-display font-bold text-olive-900 mb-8 leading-tight">
-              Ancient Tradition,<br/>Modern Innovation
+              {t('heritage.title')}
             </h2>
             <DecorativeBorder className="w-64 mb-6 text-olive-500" />
             <p className="text-xl text-olive-700 mb-6 leading-relaxed font-elegant">
-              Tunisia is home to one of the oldest olive-growing histories in the world. 
-              Olive trees over <span className="font-bold text-olive-900 text-2xl">2,500 years old</span>, 
-              found from the north to the south of the country, bear witness to an ancestral 
-              know-how passed down through generations.
-            </p>
-            <p className="text-xl text-olive-700 mb-6 leading-relaxed font-elegant">
-              Tunisian olive oil is the result of this ancient tradition, giving birth to a 
-              <span className="font-bold text-olive-900"> unique organic extra virgin olive oil</span>, 
-              distinguished by its purity and rich aromatic identity.
+              {t('heritage.subtitle')}
             </p>
             <p className="text-xl text-olive-700 leading-relaxed font-elegant">
-              Through partnerships with several modern, certified olive mills, we offer a 
-              product unique in the world. Sourced from diverse regions of Tunisia, our olive 
-              oil reflects the richness of three distinct climates, with each product certified 
-              and accompanied by a detailed analysis report, ensuring consistent quality and 
-              authentic flavor.
+              {t('heritage.description')}
             </p>
           </div>
 
@@ -268,33 +285,38 @@ function Heritage() {
 }
 
 function Products({ setMood, resetMood }) {
+  const { t } = useTranslation();
+  
   const products = [
     {
-      name: 'OLINA - Le Nord',
-      region: 'Northern Tunisia',
-      taste: 'Fresh & Fruity',
-      description: 'Fresh, green and aromatic olive oils with balanced fruitiness and refined elegance.',
+      nameKey: 'products.nord.name',
+      regionKey: 'products.nord.region',
+      tasteKey: 'products.nord.taste',
+      descriptionKey: 'products.nord.description',
       color: 'from-green-700 to-green-900',
       bgColor: 'bg-green-50',
-      BottleComponent: OlinaBottleNord
+      BottleComponent: OlinaBottleNord,
+      mood: 'nord'
     },
     {
-      name: 'OLINA - Le Centre',
-      region: 'Central Tunisia',
-      taste: 'Smooth & Balanced',
-      description: 'Well-structured olive oils with medium fruitiness and excellent balance.',
+      nameKey: 'products.centre.name',
+      regionKey: 'products.centre.region',
+      tasteKey: 'products.centre.taste',
+      descriptionKey: 'products.centre.description',
       color: 'from-amber-600 to-amber-800',
       bgColor: 'bg-amber-50',
-      BottleComponent: OlinaBottleCentre
+      BottleComponent: OlinaBottleCentre,
+      mood: 'centre'
     },
     {
-      name: 'OLINA - Le Sud',
-      region: 'Southern Tunisia',
-      taste: 'Rich & Intense',
-      description: 'Powerful and highly stable olive oils, naturally rich in polyphenols.',
+      nameKey: 'products.sud.name',
+      regionKey: 'products.sud.region',
+      tasteKey: 'products.sud.taste',
+      descriptionKey: 'products.sud.description',
       color: 'from-orange-700 to-red-900',
       bgColor: 'bg-orange-50',
-      BottleComponent: OlinaBottleSud
+      BottleComponent: OlinaBottleSud,
+      mood: 'sud'
     }
   ];
 
@@ -309,11 +331,11 @@ function Products({ setMood, resetMood }) {
         <div className="text-center mb-16">
           <OliveBranchSVG className="w-full max-w-md mx-auto mb-8 text-olive-600" />
           <h2 className="text-5xl md:text-6xl font-display font-bold text-olive-900 mb-6">
-            Our Premium Collection
+            {t('products.title')}
           </h2>
           <DecorativeBorder className="w-full max-w-xl mx-auto mb-6 text-olive-500" />
           <p className="text-2xl text-olive-700 max-w-3xl mx-auto font-elegant italic">
-            Three distinct varieties, each reflecting the unique terroir of Tunisia's diverse regions
+            {t('products.subtitle')}
           </p>
         </div>
 
@@ -322,7 +344,7 @@ function Products({ setMood, resetMood }) {
             <div
               key={index}
               className={`card-hover-fx ${ index === 0 ? 'card-nord' : index === 1 ? 'card-centre' : 'card-sud' } bg-white/50 backdrop-blur-sm rounded-3xl p-6 lg:p-8 shadow-2xl hover:shadow-olive-500/50 transition-all transform hover:-translate-y-3 hover:scale-[1.02] border-2 border-olive-200 hover:border-olive-400 relative overflow-hidden group animate-fadeInUp animate-glow`}
-              onMouseEnter={() => setMood(index === 0 ? 'nord' : index === 1 ? 'centre' : 'sud')}
+              onMouseEnter={() => setMood(product.mood)}
               onMouseLeave={() => resetMood()}
               style={{ animationDelay: `${index * 0.2}s` }}
             >
@@ -340,8 +362,8 @@ function Products({ setMood, resetMood }) {
                   <div className="absolute inset-0 bg-gradient-to-br from-olive-400/10 to-sand-400/10 rounded-xl blur-lg group-hover:blur-xl transition-all duration-500"></div>
                   <div className="relative bg-white/80 backdrop-blur-sm rounded-xl p-3 shadow-xl border border-olive-200/50 group-hover:border-olive-300 transition-all duration-300">
                     <img 
-                      src={`/products/olina_${index === 0 ? 'nord' : index === 1 ? 'centre' : 'sud'}.png`}
-                      alt={product.name}
+                      src={`/products/olina_${product.mood}.png`}
+                      alt={t(product.nameKey)}
                       className="w-full h-64 object-contain"
                     />
                   </div>
@@ -350,21 +372,62 @@ function Products({ setMood, resetMood }) {
                 
                 <OrnamentalDivider className="w-24 mb-3 text-olive-500 opacity-40" />
                 
-                <h3 className="text-2xl lg:text-3xl font-display font-bold text-olive-900 mb-2 text-center group-hover:text-olive-700 transition-colors px-2">{product.name}</h3>
-                <p className="text-olive-600 font-elegant text-base lg:text-lg font-semibold mb-4 text-center">{product.region}</p>
+                <h3 className="text-2xl lg:text-3xl font-display font-bold text-olive-900 mb-2 text-center group-hover:text-olive-700 transition-colors px-2">{t(product.nameKey)}</h3>
+                <p className="text-olive-600 font-elegant text-base lg:text-lg font-semibold mb-4 text-center">{t(product.regionKey)}</p>
                 
                 <div className="mb-5">
                   <span className={`inline-block px-5 py-2 bg-gradient-to-r ${product.color} text-white rounded-full text-sm font-display font-semibold shadow-lg group-hover:shadow-xl transition-shadow`}>
-                    {product.taste}
+                    {t(product.tasteKey)}
                   </span>
                 </div>
                 
                 <DecorativeBorder className="w-20 mb-4 text-olive-400 opacity-30" />
                 
-                <p className="text-olive-700 leading-relaxed text-center font-elegant text-base px-2">{product.description}</p>
+                <p className="text-olive-700 leading-relaxed text-center font-elegant text-base px-2">{t(product.descriptionKey)}</p>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Full Package Section */}
+        <div className="mt-24 text-center">
+          <OrnamentalDivider className="w-48 mx-auto mb-8 text-olive-500 opacity-40" />
+          <h3 className="text-4xl md:text-5xl font-display font-bold text-olive-900 mb-6">
+            {t('products.fullPackage.title')}
+          </h3>
+          <p className="text-xl text-olive-700 max-w-3xl mx-auto mb-12 font-elegant italic">
+            {t('products.fullPackage.description')}
+          </p>
+          
+          <div className="max-w-5xl mx-auto">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-olive-400/10 to-sand-400/10 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
+              <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border-2 border-olive-200 group-hover:border-olive-400 transition-all duration-300">
+                <img 
+                  src="/products/full_package.png" 
+                  alt={t('products.fullPackage.title')}
+                  className="w-full h-auto object-contain rounded-2xl"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextElementSibling.style.display = 'flex';
+                  }}
+                />
+                <div 
+                  className="hidden w-full h-96 items-center justify-center bg-gradient-to-br from-olive-50 to-sand-50 rounded-2xl"
+                >
+                  <div className="text-center p-8">
+                    <Package className="w-24 h-24 text-olive-400 mx-auto mb-4" />
+                    <p className="text-olive-600 font-elegant text-lg">
+                      {t('products.fullPackage.title')}
+                    </p>
+                    <p className="text-olive-500 text-sm mt-2">
+                      Image: /products/full_package.png
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -372,33 +435,41 @@ function Products({ setMood, resetMood }) {
 }
 
 function Regions({ setMood, resetMood }) {
+  const { t } = useTranslation();
+  
   const regions = [
     {
-      name: 'Northern Tunisia',
-      climate: 'Mediterranean Climate',
+      nameKey: 'regions.northern.name',
+      climateKey: 'regions.northern.climate',
+      characteristicsKey: 'regions.northern.characteristics',
+      idealKey: 'regions.northern.ideal',
       icon: Droplet,
-      characteristics: 'Fresh, green and aromatic olive oils with balanced fruitiness and refined elegance.',
-      ideal: 'Ideal for premium retail, gourmet markets, and table consumption.',
       color: 'from-green-600 to-teal-700',
-      LabelComponent: RegionalLabelNorth
+      LabelComponent: RegionalLabelNorth,
+      mood: 'northern',
+      labelImage: 'northern'
     },
     {
-      name: 'Central Tunisia',
-      climate: 'Semi-Arid Climate',
+      nameKey: 'regions.central.name',
+      climateKey: 'regions.central.climate',
+      characteristicsKey: 'regions.central.characteristics',
+      idealKey: 'regions.central.ideal',
       icon: Wind,
-      characteristics: 'Well-structured olive oils with medium fruitiness and excellent balance.',
-      ideal: 'Perfect for versatile use, food service, and private-label brands.',
       color: 'from-amber-600 to-orange-600',
-      LabelComponent: RegionalLabelCentral
+      LabelComponent: RegionalLabelCentral,
+      mood: 'central',
+      labelImage: 'central'
     },
     {
-      name: 'Southern Tunisia',
-      climate: 'Arid & Desert Climate',
+      nameKey: 'regions.southern.name',
+      climateKey: 'regions.southern.climate',
+      characteristicsKey: 'regions.southern.characteristics',
+      idealKey: 'regions.southern.ideal',
       icon: Sun,
-      characteristics: 'Powerful and highly stable olive oils, naturally rich in polyphenols.',
-      ideal: 'Ideal for long-term storage, blending, and industrial applications.',
       color: 'from-orange-600 to-red-700',
-      LabelComponent: RegionalLabelSouth
+      LabelComponent: RegionalLabelSouth,
+      mood: 'southern',
+      labelImage: 'southern'
     }
   ];
 
@@ -413,11 +484,11 @@ function Regions({ setMood, resetMood }) {
         <div className="text-center mb-16">
           <OliveBranchSVG className="w-full max-w-md mx-auto mb-8 text-olive-600" />
           <h2 className="text-5xl md:text-6xl font-display font-bold text-olive-900 mb-6">
-            Three Climates, Three Flavors
+            {t('regions.title')}
           </h2>
           <DecorativeBorder className="w-full max-w-xl mx-auto mb-6 text-olive-500" />
           <p className="text-2xl text-olive-700 max-w-3xl mx-auto font-elegant italic">
-            Each region of Tunisia produces olive oil with distinct characteristics shaped by its unique climate
+            {t('regions.subtitle')}
           </p>
         </div>
 
@@ -426,7 +497,7 @@ function Regions({ setMood, resetMood }) {
             <div
               key={index}
               className={`card-hover-fx ${ index === 0 ? 'card-northern' : index === 1 ? 'card-central' : 'card-southern' } bg-white/50 backdrop-blur-sm rounded-3xl p-6 lg:p-8 shadow-2xl hover:shadow-olive-500/50 transition-all hover:-translate-y-3 hover:scale-[1.02] border-2 border-olive-200 hover:border-olive-400 relative overflow-hidden group animate-scaleIn animate-glow`}
-              onMouseEnter={() => setMood(index === 0 ? 'northern' : index === 1 ? 'central' : 'southern')}
+              onMouseEnter={() => setMood(region.mood)}
               onMouseLeave={() => resetMood()}
               style={{ animationDelay: `${index * 0.2}s` }}
             >
@@ -444,8 +515,8 @@ function Regions({ setMood, resetMood }) {
                   <div className="absolute inset-0 bg-gradient-to-br from-olive-400/10 to-sand-400/10 rounded-xl blur-lg group-hover:blur-xl transition-all duration-500"></div>
                   <div className="relative bg-white/80 backdrop-blur-sm rounded-xl p-3 shadow-xl border border-olive-200/50 group-hover:border-olive-300 transition-all duration-300">
                     <img 
-                      src={`/labels/${index === 0 ? 'northern' : index === 1 ? 'central' : 'southern'}.png`}
-                      alt={region.name}
+                      src={`/labels/${region.labelImage}.png`}
+                      alt={t(region.nameKey)}
                       className="w-full h-64 object-contain"
                     />
                   </div>
@@ -458,13 +529,13 @@ function Regions({ setMood, resetMood }) {
                 
                 <OrnamentalDivider className="w-24 mb-3 text-olive-500 opacity-40" />
                 
-                <h3 className="text-xl lg:text-2xl font-display font-bold text-olive-900 mb-2 text-center group-hover:text-olive-700 transition-colors px-2">{region.name}</h3>
-                <p className="text-olive-600 font-elegant text-base lg:text-lg font-semibold mb-4 text-center">{region.climate}</p>
+                <h3 className="text-xl lg:text-2xl font-display font-bold text-olive-900 mb-2 text-center group-hover:text-olive-700 transition-colors px-2">{t(region.nameKey)}</h3>
+                <p className="text-olive-600 font-elegant text-base lg:text-lg font-semibold mb-4 text-center">{t(region.climateKey)}</p>
                 
                 <DecorativeBorder className="w-20 mb-4 text-olive-400 opacity-30" />
                 
-                <p className="text-olive-700 mb-3 leading-relaxed font-elegant text-sm lg:text-base text-center px-2">{region.characteristics}</p>
-                <p className="text-olive-800 font-medium italic text-sm text-center px-2">{region.ideal}</p>
+                <p className="text-olive-700 mb-3 leading-relaxed font-elegant text-sm lg:text-base text-center px-2">{t(region.characteristicsKey)}</p>
+                <p className="text-olive-800 font-medium italic text-sm text-center px-2">{t(region.idealKey)}</p>
               </div>
             </div>
           ))}
@@ -475,6 +546,8 @@ function Regions({ setMood, resetMood }) {
 }
 
 function Quality() {
+  const { t } = useTranslation();
+  
   return (
     <section id="quality" className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
@@ -486,20 +559,20 @@ function Quality() {
         <div className="text-center mb-16">
           <OrnamentalDivider className="w-full max-w-xl mx-auto mb-8 text-olive-600" />
           <h2 className="text-5xl md:text-6xl font-display font-bold text-olive-900 mb-6">
-            Certified Excellence
+            {t('quality.title')}
           </h2>
           <DecorativeBorder className="w-full max-w-xl mx-auto mb-6 text-olive-500" />
           <p className="text-2xl text-olive-700 max-w-3xl mx-auto font-elegant italic">
-            Every bottle meets the highest international standards
+            {t('quality.subtitle')}
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { icon: Award, title: 'Certified Organic', desc: 'Organic certification from accredited bodies' },
-            { icon: Leaf, title: 'Extra Virgin', desc: 'First cold press, premium quality' },
-            { icon: Package, title: 'Lab Tested', desc: 'Detailed analysis report included' },
-            { icon: Award, title: 'Quality Assured', desc: 'Consistent quality and authentic flavor' }
+            { icon: Award, titleKey: 'quality.certifications.organic.title', descKey: 'quality.certifications.organic.description' },
+            { icon: Leaf, titleKey: 'quality.certifications.extraVirgin.title', descKey: 'quality.certifications.extraVirgin.description' },
+            { icon: Package, titleKey: 'quality.certifications.iso.title', descKey: 'quality.certifications.iso.description' },
+            { icon: Award, titleKey: 'quality.certifications.awards.title', descKey: 'quality.certifications.awards.description' }
           ].map((item, index) => (
             <div
               key={index}
@@ -509,8 +582,8 @@ function Quality() {
                 <AncientPattern className="w-full h-full text-olive-600" />
               </div>
               <item.icon className="w-20 h-20 text-olive-600 mx-auto mb-6 relative z-10" />
-              <h3 className="text-2xl font-display font-bold text-olive-900 mb-3">{item.title}</h3>
-              <p className="text-olive-700 font-elegant text-lg">{item.desc}</p>
+              <h3 className="text-2xl font-display font-bold text-olive-900 mb-3">{t(item.titleKey)}</h3>
+              <p className="text-olive-700 font-elegant text-lg">{t(item.descKey)}</p>
             </div>
           ))}
         </div>
@@ -520,6 +593,8 @@ function Quality() {
 }
 
 function Contact() {
+  const { t } = useTranslation();
+  
   return (
     <section id="contact" className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 opacity-5">
@@ -531,7 +606,7 @@ function Contact() {
         <div className="text-center mb-16">
           <OrnamentalDivider className="w-full max-w-xl mx-auto mb-8 text-olive-600" />
           <h2 className="text-5xl md:text-6xl font-display font-bold text-olive-900 mb-6">
-            Let's Work Together
+            {t('contact.title')}
           </h2>
           <DecorativeBorder className="w-full max-w-xl mx-auto mb-6 text-olive-500" />
         </div>
@@ -539,8 +614,7 @@ function Contact() {
         <div className="grid md:grid-cols-2 gap-16">
           <div>
             <p className="text-xl text-olive-700 mb-10 leading-relaxed font-elegant">
-              Whether you're looking for premium packaging solutions or interested in our 
-              Tunisian olive oil products, we're here to help bring your vision to life.
+              {t('contact.subtitle')}
             </p>
 
             <div className="space-y-8">
@@ -550,7 +624,7 @@ function Contact() {
                 </div>
                 <div>
                   <h3 className="font-display font-bold text-olive-900 mb-2 text-xl">Email</h3>
-                  <p className="text-olive-700 font-elegant text-lg">contact@gumpack.com</p>
+                  <p className="text-olive-700 font-elegant text-lg">{t('contact.info.email')}</p>
                 </div>
               </div>
 
@@ -560,7 +634,7 @@ function Contact() {
                 </div>
                 <div>
                   <h3 className="font-display font-bold text-olive-900 mb-2 text-xl">Phone</h3>
-                  <p className="text-olive-700 font-elegant text-lg">+216 XX XXX XXX</p>
+                  <p className="text-olive-700 font-elegant text-lg">{t('contact.info.phone')}</p>
                 </div>
               </div>
 
@@ -570,7 +644,7 @@ function Contact() {
                 </div>
                 <div>
                   <h3 className="font-display font-bold text-olive-900 mb-2 text-xl">Location</h3>
-                  <p className="text-olive-700 font-elegant text-lg">Tunisia</p>
+                  <p className="text-olive-700 font-elegant text-lg">{t('contact.info.address')}</p>
                 </div>
               </div>
             </div>
@@ -582,34 +656,34 @@ function Contact() {
             </div>
             <form className="space-y-6 relative z-10">
               <div>
-                <label className="block text-olive-900 font-display font-semibold mb-3 text-lg">Name</label>
+                <label className="block text-olive-900 font-display font-semibold mb-3 text-lg">{t('contact.form.name')}</label>
                 <input
                   type="text"
                   className="w-full px-5 py-4 rounded-xl border-2 border-olive-200 focus:border-olive-600 focus:outline-none transition-all bg-white/80 backdrop-blur-sm font-elegant text-lg"
-                  placeholder="Your name"
+                  placeholder={t('contact.form.name')}
                 />
               </div>
               <div>
-                <label className="block text-olive-900 font-display font-semibold mb-3 text-lg">Email</label>
+                <label className="block text-olive-900 font-display font-semibold mb-3 text-lg">{t('contact.form.email')}</label>
                 <input
                   type="email"
                   className="w-full px-5 py-4 rounded-xl border-2 border-olive-200 focus:border-olive-600 focus:outline-none transition-all bg-white/80 backdrop-blur-sm font-elegant text-lg"
-                  placeholder="your@email.com"
+                  placeholder={t('contact.form.email')}
                 />
               </div>
               <div>
-                <label className="block text-olive-900 font-display font-semibold mb-3 text-lg">Message</label>
+                <label className="block text-olive-900 font-display font-semibold mb-3 text-lg">{t('contact.form.message')}</label>
                 <textarea
                   rows="5"
                   className="w-full px-5 py-4 rounded-xl border-2 border-olive-200 focus:border-olive-600 focus:outline-none transition-all resize-none bg-white/80 backdrop-blur-sm font-elegant text-lg"
-                  placeholder="Tell us about your project..."
+                  placeholder={t('contact.form.message')}
                 ></textarea>
               </div>
               <button
                 type="submit"
                 className="w-full px-10 py-5 bg-gradient-to-r from-olive-700 to-olive-800 text-white rounded-full font-display font-semibold text-lg hover:from-olive-800 hover:to-olive-900 transition-all shadow-2xl hover:shadow-olive-500/50 hover:scale-105"
               >
-                Send Message
+                {t('contact.form.send')}
               </button>
             </form>
           </div>
@@ -620,6 +694,8 @@ function Contact() {
 }
 
 function Footer({ scrollToSection }) {
+  const { t } = useTranslation();
+  
   return (
     <footer className="bg-gradient-to-b from-olive-900 to-olive-950 text-white py-16 relative overflow-hidden">
       <div className="absolute inset-0 opacity-5">
@@ -638,20 +714,25 @@ function Footer({ scrollToSection }) {
               </div>
             </div>
             <p className="text-sand-300 font-elegant text-base leading-relaxed">
-              Premium packaging solutions for Tunisia's finest olive oil
+              {t('footer.description')}
             </p>
           </div>
 
           <div>
-            <h4 className="font-display font-bold mb-6 text-xl">Quick Links</h4>
+            <h4 className="font-display font-bold mb-6 text-xl">{t('footer.quickLinks')}</h4>
             <ul className="space-y-3 text-sand-300">
-              {['About', 'Products', 'Regions', 'Quality'].map((item) => (
-                <li key={item}>
+              {[
+                { key: 'heritage', label: t('nav.heritage') },
+                { key: 'products', label: t('nav.products') },
+                { key: 'regions', label: t('nav.regions') },
+                { key: 'quality', label: t('nav.quality') }
+              ].map((item) => (
+                <li key={item.key}>
                   <button
-                    onClick={() => scrollToSection(item.toLowerCase())}
+                    onClick={() => scrollToSection(item.key)}
                     className="hover:text-white transition-colors font-elegant text-lg hover:translate-x-2 inline-block transition-transform"
                   >
-                    {item}
+                    {item.label}
                   </button>
                 </li>
               ))}
